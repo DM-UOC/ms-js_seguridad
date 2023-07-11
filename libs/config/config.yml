@@ -3,6 +3,15 @@ production: &default
   environment: production
   puerto: 3001
   enlace: '0.0.0.0'
+  servidor:
+    mongo:
+      coopeartiva:
+        nombre: MONGO_NOMBRE
+        direccion: MONGO_DIRECCION
+        puerto: MONGO_PUERTO
+        basedatos: MONGO_DB
+        usuario: MONGO_USUARIO
+        clave: MONGO_CLAVE
   cadenas:
     mensajes:
       dominio:
