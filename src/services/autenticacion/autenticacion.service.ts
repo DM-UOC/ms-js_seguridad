@@ -11,8 +11,15 @@ export class AutenticacionService {
 
   constructor(
     @InjectModel(UsuarioEntity) private readonly usuarioEntity: ReturnModelType<typeof UsuarioEntity>,
-    private configService: ConfigService
   ) {}
+
+  private async validaClave(clave: string) {
+    try {
+      
+    } catch (error) {
+      throw error;
+    }
+  }
 
   async autenticacion(autenticacionDto: AutenticacionDto) {
     try {
@@ -20,8 +27,8 @@ export class AutenticacionService {
       let clave: string = '';
       // * desestructura el objeto...
       const { usuario } = autenticacionDto;
-      let buscarPorUsuario = { usuario };
-      let buscarPorCorreo = { 'correos.correo': usuario };
+      let buscarPorUsuario = { usuario, activo: true };
+      let buscarPorCorreo = { 'correos.correo': usuario, 'correos.principal': true, activo: true };
       // * verificamos datos...
       // * búsqueda por usuario...
       const registroUsuario = await this.usuarioEntity.findOne(buscarPorUsuario);
@@ -31,7 +38,8 @@ export class AutenticacionService {
       if(!registroUsuario && !registroCorreo) throw new UnauthorizedException("usuario y/o claves incorrectas");
       // * retorno datos...
       if(registroUsuario) clave = registroUsuario.clave; 
-      if(registroCorreo) clave = registroUsuario.clave; 
+      if(registroCorreo) clave = registroUsuario.clave;
+      // * validamos la clave... 
     } catch (error) {
       throw error;
     }

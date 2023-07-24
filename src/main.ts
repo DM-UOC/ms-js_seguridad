@@ -13,14 +13,14 @@ async function bootstrap() {
   /**
    * * Inicio seteo de microservicio...
    */
-  const appAsMicroservice: INestMicroservice = await NestFactory.createMicroservice(AppModule, {
+  const appMicroservice: INestMicroservice = await NestFactory.createMicroservice(AppModule, {
     transport: Transport.TCP,
     options: { 
       host: config().enlace,
       port: config().puerto
     }
   });
-  // escuchando microservicio...
-  await appAsMicroservice.listen();
+  // * escuchando microservicio...
+  await appMicroservice.listen();
 }
 bootstrap();
