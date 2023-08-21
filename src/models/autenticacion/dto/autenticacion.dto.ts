@@ -1,4 +1,4 @@
 export class AutenticacionDto {
-  readonly usuario?: string;
-  readonly clave!: string;
+  readonly usuario!: string;
+  readonly clave!: number;
 }

@@ -10,8 +10,13 @@ export class AutenticacionController {
   constructor(private readonly autenticacionService: AutenticacionService) {}
 
   @MessagePattern({ cmd: 'autenticacion' })
-  autenticacion(autenticacionDto: AutenticacionDto) {
-    return this.autenticacionService.autenticacion(autenticacionDto);
+  async autenticacion(autenticacionDto: AutenticacionDto) {
+    try {      
+      return await this.autenticacionService.autenticacion(autenticacionDto);
+    } catch (error) {
+      console.log("ms-seguridad...")
+      throw error;
+    }
   }
   
 }

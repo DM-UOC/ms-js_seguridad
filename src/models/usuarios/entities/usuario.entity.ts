@@ -3,6 +3,7 @@ import { prop } from "@typegoose/typegoose";
 
 import { CorreoEntity } from "@models/usuarios/entities/correo.entity";
 import { AuditoriaEntity } from "@models/auditoria/auditoria.entity";
+import { PinCodigoEntity } from "@models/usuarios/entities/pincodigo.entity";
 
 export class UsuarioEntity {
   
@@ -14,9 +15,9 @@ export class UsuarioEntity {
   @prop({})
   nombre_completo: string;
   @prop({})
-  usuario!: string;  
-  @prop({})
-  clave!: string;
+  usuario!: string;
+  @prop({ type: PinCodigoEntity, default: [] })
+  claves!: PinCodigoEntity[];
   @prop({})
   direccion!: string;
   @prop({ type: CorreoEntity, default: [] })
