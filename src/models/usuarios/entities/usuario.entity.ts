@@ -7,7 +7,7 @@ import { PinCodigoEntity } from "@models/usuarios/entities/pincodigo.entity";
 
 export class UsuarioEntity {
   
-  readonly id: ObjectId;
+  readonly _id: ObjectId;
   @prop({})
   nombre!: string;
   @prop({})

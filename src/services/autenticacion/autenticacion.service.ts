@@ -17,10 +17,10 @@ export class AutenticacionService {
   private async increamentaIntentos(usuarioEntity: UsuarioEntity) {
     try {
       // * desestrucutura el objeto...
-      const { id } = usuarioEntity;
+      const { _id } = usuarioEntity;
       // * incrementa el # de intentos...
       return await this.usuarioEntity.findByIdAndUpdate({
-        id
+        _id
       }, {
         $set: {
           'claves.$[clave].auditoria': {
@@ -29,7 +29,7 @@ export class AutenticacionService {
           }
         },
         $inc: {
-          'claves.$[clave].intentos': 1
+          'claves.$[clave].intento': 1
         }
       }, {
         upsert: true,
@@ -47,10 +47,10 @@ export class AutenticacionService {
   private async eliminaIntentos(usuarioEntity: UsuarioEntity) {
     try {
       // * desestrucutura el objeto...
-      const { id } = usuarioEntity;
+      const { _id } = usuarioEntity;
       // * incrementa el # de intentos...
       await this.usuarioEntity.findByIdAndUpdate({
-        id
+        _id
       }, {
         $set: {
           'claves.$[clave].activo': false,
@@ -68,7 +68,7 @@ export class AutenticacionService {
         ]
       });
       // * envía el mensaje de error...
-      throw new UnauthorizedException(`Su usuario ha sido bloqueado hasta que genere un nuevo código de 6 dígitos.`);      
+      throw new RpcException(`Su usuario ha sido bloqueado hasta que genere un nuevo código de 6 dígitos.`);      
     } catch (error) {
       throw error;
     }
@@ -79,12 +79,12 @@ export class AutenticacionService {
       // * incrementa el contador de intentos..
       const usuarioIntentos = await this.increamentaIntentos(usuarioEntity);
       // * envia el mensaje
-      const result = usuarioIntentos.claves.find((clave) => clave.ultimo === true);
+      const result = usuarioIntentos.claves.find((clave) => clave.activo === true);
       // * si el resultado es === 3 desactivamos el código actual...
       // * el usuario tendrá que generar uno nuevo...
-      if(result.intentos === 3) await this.eliminaIntentos(usuarioEntity);
+      if(result.intento === 3) await this.eliminaIntentos(usuarioEntity);
       // * envía el mensaje de error...
-      throw new UnauthorizedException(`Tiene ${(result.intentos - 3)} intentos para ingresar.`);
+      throw new RpcException(`Tiene ${(result.intento - 3)} intentos para ingresar.`);
     } catch (error) {
       throw error;
     }
@@ -97,7 +97,7 @@ export class AutenticacionService {
         // * verifica si es ultimo...
         // * si es el estado no está en eliminado...
         // * si el código son iguales...
-        return clave.ultimo && !clave.activo && clave.codigo === codigo;
+        return !clave.activo && clave.codigo === codigo;
       });
       // * no encontró resultado registra los intentos fallidos...
       if(!result) await this.procesaIntentos(usuarioEntity);
@@ -115,7 +115,7 @@ export class AutenticacionService {
         // * verifica si es ultimo...
         // * si es el estado no está en eliminado...
         // * si el código son iguales...
-        return clave.intentos === 3;
+        return clave.intento === 3;
       });      
     } catch (error) {
       throw error;
@@ -126,7 +126,7 @@ export class AutenticacionService {
     try {
       // * 1) verifica si el código no ha sufrido intennos fallidos...
       // * si existe, ya ha intentado + de 3 veces, enviamos el error...
-      if(this.verificaHabilitadoPinCodigo(usuarioEntity)) throw new UnauthorizedException("Se ha bloqueado el núkero de intentos. Genere una nueva clave");
+      if(this.verificaHabilitadoPinCodigo(usuarioEntity)) throw new RpcException("Se ha bloqueado el núkero de intentos. Genere una nueva clave");
       // * si el # de intentos no está excedido...
       // * verificamos el código que ingresa...
       await this.validaClave(usuarioEntity, codigo);
@@ -138,11 +138,11 @@ export class AutenticacionService {
   async autenticacion(autenticacionDto: AutenticacionDto) {
     try {
       // * desestructura el objeto...
-      const { usuario, clave } = autenticacionDto;
+      const { email, password } = autenticacionDto;
       // * filtro por usuario...
-      let buscarPorUsuario = { usuario, activo: true };
+      let buscarPorUsuario = { email, activo: true };
       // * filtro por correo...
-      let buscarPorCorreo = { 'correos.correo': usuario, 'correos.principal': true, activo: true };
+      let buscarPorCorreo = { 'correos.correo': email, 'correos.principal': true, activo: true };
       // * verificamos datos...
       // * búsqueda por usuario...
       const registroUsuario = await this.usuarioEntity.findOne(buscarPorUsuario);
@@ -151,7 +151,7 @@ export class AutenticacionService {
       // * verifica si retorna datos...
       if(!registroUsuario && !registroCorreo) throw new RpcException("¡Usuario y/o correo electrónico incorrectos. Verifique!");
       // * validamos el código que ingrsa...
-      this.verificaCredenciales(!registroUsuario? registroCorreo: registroUsuario, clave);
+      this.verificaCredenciales(!registroUsuario? registroCorreo: registroUsuario, password);
     } catch (error) {
       throw error;
     }
