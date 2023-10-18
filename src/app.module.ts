@@ -8,6 +8,7 @@ import { MongoModule } from '@modules/mongo/mongo.module';
 import { UsuarioModule } from '@modules/mongo/usuarios/usuario.module';
 
 import { AppService } from './app.service';
+import { MenusModule } from './controllers/menus/menus.module';
 
 import config from '@app/libs/config/config';
 
@@ -18,7 +19,8 @@ import config from '@app/libs/config/config';
     }),     
     AutenticacionModule,
     UsuarioModule,
-    MongoModule
+    MongoModule,
+    MenusModule
   ],
   controllers: [AppController],
   providers: [AppService],
