@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { MenusService } from './menus.service';
-import { MenusController } from './menus.controller';
+import { MenusService } from '@services/menus/menus.service';
+import { MenusController } from '@controllers/menus/menus.controller';
 
 @Module({
   controllers: [MenusController],

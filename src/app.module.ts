@@ -6,9 +6,9 @@ import { AppController } from './app.controller';
 import { AutenticacionModule } from '@modules/autenticacion/autenticacion.module';
 import { MongoModule } from '@modules/mongo/mongo.module';
 import { UsuarioModule } from '@modules/mongo/usuarios/usuario.module';
+import { MenusModule } from '@modules/menus/menus.module';
 
 import { AppService } from './app.service';
-import { MenusModule } from './controllers/menus/menus.module';
 
 import config from '@app/libs/config/config';
 
