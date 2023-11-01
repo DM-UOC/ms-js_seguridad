@@ -7,6 +7,7 @@ import { AutenticacionModule } from '@modules/autenticacion/autenticacion.module
 import { MongoModule } from '@modules/mongo/mongo.module';
 import { UsuarioModule } from '@modules/mongo/usuarios/usuario.module';
 import { MenusModule } from '@modules/menus/menus.module';
+import { RolesModule } from '@modules/roles/roles.module';
 
 import { AppService } from './app.service';
 
@@ -16,11 +17,12 @@ import config from '@app/libs/config/config';
   imports: [
     ConfigModule.forRoot({
       load: [config],
-    }),     
+    }),
     AutenticacionModule,
     UsuarioModule,
     MongoModule,
-    MenusModule
+    MenusModule,
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

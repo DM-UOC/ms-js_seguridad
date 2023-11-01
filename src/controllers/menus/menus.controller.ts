@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 
 import { CreateMenuDto } from '@models/menus/dto/create-menu.dto';
 import { UpdateMenuDto } from '@models/menus/dto/update-menu.dto';

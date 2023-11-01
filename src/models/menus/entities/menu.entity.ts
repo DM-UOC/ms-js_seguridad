@@ -1,10 +1,9 @@
-import { prop } from "@typegoose/typegoose";
-import { ObjectId } from "mongoose";
+import { prop } from '@typegoose/typegoose';
+import { ObjectId } from 'mongoose';
 
-import { AuditoriaEntity } from "@models/auditoria/auditoria.entity";
+import { AuditoriaEntity } from '@models/auditoria/auditoria.entity';
 
 export class MenuEntity {
-
   readonly _id: ObjectId;
   @prop({ default: '#' })
   menu_id!: string;
@@ -12,11 +11,10 @@ export class MenuEntity {
   nivel!: number;
   @prop({})
   descripcion!: string;
-  @prop({ default: "#" })
-  pagina?: string;
+  @prop({ default: '#' })
+  enlace?: string;
   @prop({})
-  icono?: string;  
+  icono?: string;
   @prop({ type: AuditoriaEntity })
   auditoria!: AuditoriaEntity;
-
 }
