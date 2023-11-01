@@ -1,7 +1,8 @@
-import { prop } from "@typegoose/typegoose";
+import { prop } from '@typegoose/typegoose';
 
 export class AuditoriaEntity {
-
+  @prop({ default: true })
+  activo: boolean;
   @prop({ default: new Date() })
   fecha_ingresa!: Date;
   @prop()
@@ -10,5 +11,4 @@ export class AuditoriaEntity {
   fecha_actualiza?: Date;
   @prop()
   usuario_actualiza?: string;
-  
 }

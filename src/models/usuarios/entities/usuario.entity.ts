@@ -23,8 +23,6 @@ export class UsuarioEntity {
   roles: string[];
   @prop({ type: CorreoEntity, default: [] })
   correos: CorreoEntity[];
-  @prop({ default: true })
-  activo: boolean;
   @prop({ type: AuditoriaEntity })
   auditoria: AuditoriaEntity;
 }

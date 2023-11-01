@@ -5,9 +5,9 @@ import { AuditoriaEntity } from '@models/auditoria/auditoria.entity';
 
 export class MenuEntity {
   readonly _id: ObjectId;
-  @prop({ default: '#' })
+  @prop({ default: '' })
   menu_id!: string;
-  @prop({ default: 0, min: 0, max: 1 })
+  @prop({ default: 0, min: 0, max: 2 })
   nivel!: number;
   @prop({})
   descripcion!: string;
