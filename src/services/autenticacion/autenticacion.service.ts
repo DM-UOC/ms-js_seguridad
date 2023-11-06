@@ -1,6 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from 'nestjs-typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 
@@ -12,9 +13,12 @@ export class AutenticacionService {
   constructor(
     @InjectModel(UsuarioEntity)
     private readonly usuarioEntity: ReturnModelType<typeof UsuarioEntity>,
+    private readonly jwtService: JwtService,
   ) {}
 
-  private async increamentaIntentos(usuarioEntity: UsuarioEntity) {
+  private async increamentaIntentos(
+    usuarioEntity: UsuarioEntity,
+  ): Promise<UsuarioEntity> {
     try {
       // * desestrucutura el objeto...
       const { _id } = usuarioEntity;
@@ -35,10 +39,11 @@ export class AutenticacionService {
           },
         },
         {
+          new: true,
           upsert: true,
           arrayFilters: [
             {
-              'clave.activo': true,
+              'clave.auditoria.activo': true,
             },
           ],
         },
@@ -70,7 +75,7 @@ export class AutenticacionService {
           upsert: true,
           arrayFilters: [
             {
-              'clave.activo': true,
+              'clave.auditoria.activo': true,
             },
           ],
         },
@@ -90,36 +95,52 @@ export class AutenticacionService {
       const usuarioIntentos = await this.increamentaIntentos(usuarioEntity);
       // * envia el mensaje
       const result = usuarioIntentos.claves.find(
-        (clave) => clave.activo === true,
+        (clave) => clave.auditoria.activo === true,
       );
       // * si el resultado es === 3 desactivamos el código actual...
       // * el usuario tendrá que generar uno nuevo...
       if (result.intento === 3) await this.eliminaIntentos(usuarioEntity);
       // * envía el mensaje de error...
       throw new RpcException(
-        `Tiene ${result.intento - 3} intentos para ingresar.`,
+        `El PIN de seguridad es Incorrecto. Tiene ${
+          3 - result.intento
+        } intento(s) para ingresar.`,
       );
     } catch (error) {
       throw error;
     }
   }
 
+  private async retornaTokenUsuario(
+    usuarioEntity: UsuarioEntity,
+  ): Promise<string> {
+    // * desestructura el objeto...
+    const { usuario } = usuarioEntity;
+    // * payload...
+    const payload = {
+      usuario,
+    };
+    // * retornamos el token...
+    return this.jwtService.sign(payload);
+  }
+
   private async validaClave(
     usuarioEntity: UsuarioEntity,
     codigo: number,
-  ): Promise<boolean> {
+  ): Promise<string> {
     try {
       // * buscamos si encuentra el pin...
       const result = usuarioEntity.claves.find((clave) => {
         // * verifica si es ultimo...
         // * si es el estado no está en eliminado...
         // * si el código son iguales...
-        return !clave.activo && clave.codigo === codigo;
+        return clave.auditoria.activo && +clave.codigo === +codigo;
       });
       // * no encontró resultado registra los intentos fallidos...
       if (!result) await this.procesaIntentos(usuarioEntity);
       // * encontró el pin y fue validado...
-      return true;
+      // * retorna JWT...
+      return await this.retornaTokenUsuario(usuarioEntity);
     } catch (error) {
       throw error;
     }
@@ -148,7 +169,7 @@ export class AutenticacionService {
       // * si existe, ya ha intentado + de 3 veces, enviamos el error...
       if (this.verificaHabilitadoPinCodigo(usuarioEntity))
         throw new RpcException(
-          'Se ha bloqueado el núkero de intentos. Genere una nueva clave',
+          'Se ha bloqueado el número de intentos. Genere una nueva clave',
         );
       // * si el # de intentos no está excedido...
       // * verificamos el código que ingresa...
@@ -158,35 +179,55 @@ export class AutenticacionService {
     }
   }
 
-  async autenticacion(autenticacionDto: AutenticacionDto) {
+  private async retornaConsultaAggregate(
+    arregloAggregate: Array<any>,
+  ): Promise<UsuarioEntity[]> {
+    try {
+      return await this.usuarioEntity.aggregate(arregloAggregate);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async verificaExisteCorreo(autenticacionDto: AutenticacionDto) {
     try {
       // * desestructura el objeto...
-      const { email, password } = autenticacionDto;
-      // * filtro por usuario...
-      const buscarPorUsuario = { email, activo: true };
+      const { email } = autenticacionDto;
       // * filtro por correo...
-      const buscarPorCorreo = {
-        'correos.correo': email,
-        'correos.principal': true,
-        activo: true,
-      };
-      // * verificamos datos...
-      // * búsqueda por usuario...
-      const registroUsuario = await this.usuarioEntity.findOne(
-        buscarPorUsuario,
-      );
+      const arregloAggregate = [
+        {
+          $unwind: '$correos',
+        },
+        {
+          $match: {
+            'correos.correo': email,
+            'correos.principal': true,
+            'auditoria.activo': true,
+          },
+        },
+        {
+          $limit: 1,
+        },
+      ];
+      // * busca resultado...
+      return await this.retornaConsultaAggregate(arregloAggregate);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async autenticacion(autenticacionDto: AutenticacionDto) {
+    try {
+      const { password } = autenticacionDto;
       // * búsqueda por correo...
-      const registroCorreo = await this.usuarioEntity.findOne(buscarPorCorreo);
+      const autenticacion = await this.verificaExisteCorreo(autenticacionDto);
       // * verifica si retorna datos...
-      if (!registroUsuario && !registroCorreo)
+      if (autenticacion.length === 0)
         throw new RpcException(
           '¡Usuario y/o correo electrónico incorrectos. Verifique!',
         );
       // * validamos el código que ingrsa...
-      this.verificaCredenciales(
-        !registroUsuario ? registroCorreo : registroUsuario,
-        password,
-      );
+      return await this.verificaCredenciales(autenticacion[0], password);
     } catch (error) {
       throw error;
     }

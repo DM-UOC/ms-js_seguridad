@@ -9,8 +9,6 @@ export class RoleEntity {
   description!: string;
   @prop({})
   menus!: string[];
-  @prop({ default: true })
-  activo: boolean;
-  @prop({ type: AuditoriaEntity })
+  @prop({ type: AuditoriaEntity, _id: false })
   auditoria: AuditoriaEntity;
 }

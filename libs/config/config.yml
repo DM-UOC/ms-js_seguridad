@@ -31,6 +31,12 @@ production: &default
         colores:
           dark: '#00F'
           light: '#0000'
+  seguridad:
+    secreto: 933593b7aedb2c018fab87fb5ada6a2c
+    llave:
+      clave: p@s$$w0Rd/k3Y
+    tiempo:
+      caducidad: 60 * 60 # 60 minutos...
 stage: &stage
   <<: *default
 

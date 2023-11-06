@@ -23,6 +23,6 @@ export class UsuarioEntity {
   roles: string[];
   @prop({ type: CorreoEntity, default: [] })
   correos: CorreoEntity[];
-  @prop({ type: AuditoriaEntity })
+  @prop({ type: AuditoriaEntity, _id: false })
   auditoria: AuditoriaEntity;
 }

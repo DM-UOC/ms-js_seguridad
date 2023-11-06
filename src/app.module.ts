@@ -10,6 +10,7 @@ import { MenusModule } from '@modules/menus/menus.module';
 import { RolesModule } from '@modules/roles/roles.module';
 
 import { AppService } from './app.service';
+import { SeguridadModule } from './modules/seguridad/seguridad.module';
 
 import config from '@app/libs/config/config';
 
@@ -23,6 +24,7 @@ import config from '@app/libs/config/config';
     MongoModule,
     MenusModule,
     RolesModule,
+    SeguridadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

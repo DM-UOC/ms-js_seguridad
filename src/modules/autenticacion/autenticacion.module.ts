@@ -15,17 +15,17 @@ import config from '@app/libs/config/config';
         {
           typegooseClass: UsuarioEntity,
           schemaOptions: {
-            collection: "usuarios",
-            versionKey: false
-          }
-        }
+            collection: 'usuarios',
+            versionKey: false,
+          },
+        },
       ],
       config().servidor.mongo.coopeartiva.nombre,
-    ),    
+    ),
     ConfigModule,
   ],
   controllers: [AutenticacionController],
   providers: [AutenticacionService],
-  exports: []
+  exports: [],
 })
 export class AutenticacionModule {}

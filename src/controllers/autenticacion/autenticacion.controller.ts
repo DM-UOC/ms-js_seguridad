@@ -7,17 +7,15 @@ import { ExceptionFilter } from '@app/src/filters/exception-filter/exception-fil
 
 @Controller('autenticacion')
 export class AutenticacionController {
-
   constructor(private readonly autenticacionService: AutenticacionService) {}
 
   @UseFilters(new ExceptionFilter())
   @MessagePattern({ cmd: 'autenticacion' })
   async autenticacion(autenticacionDto: AutenticacionDto) {
-    try {      
+    try {
       return await this.autenticacionService.autenticacion(autenticacionDto);
     } catch (error) {
       throw error;
     }
   }
-  
 }
