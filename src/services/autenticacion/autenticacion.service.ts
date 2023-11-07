@@ -2,104 +2,33 @@ import { Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { InjectModel } from 'nestjs-typegoose';
-import { ReturnModelType } from '@typegoose/typegoose';
+import { Types } from 'mongoose';
 
 import { AutenticacionDto } from '@models/autenticacion/dto/autenticacion.dto';
 import { UsuarioEntity } from '@models/usuarios/entities/usuario.entity';
+import { UsuariosService } from '@services/usuarios/usuarios.service';
 
 @Injectable()
 export class AutenticacionService {
   constructor(
-    @InjectModel(UsuarioEntity)
-    private readonly usuarioEntity: ReturnModelType<typeof UsuarioEntity>,
+    private readonly usuariosService: UsuariosService,
     private readonly jwtService: JwtService,
   ) {}
-
-  private async increamentaIntentos(
-    usuarioEntity: UsuarioEntity,
-  ): Promise<UsuarioEntity> {
-    try {
-      // * desestrucutura el objeto...
-      const { _id } = usuarioEntity;
-      // * incrementa el # de intentos...
-      return await this.usuarioEntity.findByIdAndUpdate(
-        {
-          _id,
-        },
-        {
-          $set: {
-            'claves.$[clave].auditoria': {
-              fecha_actualiza: new Date(),
-              usuario_actualiza: usuarioEntity.usuario,
-            },
-          },
-          $inc: {
-            'claves.$[clave].intento': 1,
-          },
-        },
-        {
-          new: true,
-          upsert: true,
-          arrayFilters: [
-            {
-              'clave.auditoria.activo': true,
-            },
-          ],
-        },
-      );
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  private async eliminaIntentos(usuarioEntity: UsuarioEntity) {
-    try {
-      // * desestrucutura el objeto...
-      const { _id } = usuarioEntity;
-      // * incrementa el # de intentos...
-      await this.usuarioEntity.findByIdAndUpdate(
-        {
-          _id,
-        },
-        {
-          $set: {
-            'claves.$[clave].activo': false,
-            'claves.$[clave].auditoria': {
-              fecha_actualiza: new Date(),
-              usuario_actualiza: usuarioEntity.usuario,
-            },
-          },
-        },
-        {
-          upsert: true,
-          arrayFilters: [
-            {
-              'clave.auditoria.activo': true,
-            },
-          ],
-        },
-      );
-      // * envía el mensaje de error...
-      throw new RpcException(
-        `Su usuario ha sido bloqueado hasta que genere un nuevo código de 6 dígitos.`,
-      );
-    } catch (error) {
-      throw error;
-    }
-  }
 
   private async procesaIntentos(usuarioEntity: UsuarioEntity) {
     try {
       // * incrementa el contador de intentos..
-      const usuarioIntentos = await this.increamentaIntentos(usuarioEntity);
+      const usuarioIntentos = await this.usuariosService.increamentaIntentos(
+        usuarioEntity,
+      );
       // * envia el mensaje
       const result = usuarioIntentos.claves.find(
         (clave) => clave.auditoria.activo === true,
       );
       // * si el resultado es === 3 desactivamos el código actual...
       // * el usuario tendrá que generar uno nuevo...
-      if (result.intento === 3) await this.eliminaIntentos(usuarioEntity);
+      if (result.intento === 3)
+        await this.usuariosService.eliminaIntentos(usuarioEntity);
       // * envía el mensaje de error...
       throw new RpcException(
         `El PIN de seguridad es Incorrecto. Tiene ${
@@ -116,11 +45,12 @@ export class AutenticacionService {
   ): Promise<string> {
     try {
       // * desestructura el objeto...
-      const { _id, usuario } = usuarioEntity;
+      const { _id, usuario, nombre_completo } = usuarioEntity;
       // * payload...
       const payload = {
         _id,
         usuario,
+        nombre_completo,
       };
       // * retornamos el token...
       return this.jwtService.sign(payload);
@@ -184,16 +114,6 @@ export class AutenticacionService {
     }
   }
 
-  private async retornaConsultaAggregate(
-    arregloAggregate: Array<any>,
-  ): Promise<UsuarioEntity[]> {
-    try {
-      return await this.usuarioEntity.aggregate(arregloAggregate);
-    } catch (error) {
-      throw error;
-    }
-  }
-
   private async verificaExisteCorreo(autenticacionDto: AutenticacionDto) {
     try {
       // * desestructura el objeto...
@@ -215,7 +135,9 @@ export class AutenticacionService {
         },
       ];
       // * busca resultado...
-      return await this.retornaConsultaAggregate(arregloAggregate);
+      return await this.usuariosService.retornaConsultaAggregate(
+        arregloAggregate,
+      );
     } catch (error) {
       throw error;
     }
@@ -233,6 +155,78 @@ export class AutenticacionService {
         );
       // * validamos el código que ingrsa...
       return await this.verificaCredenciales(autenticacion[0], password);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async menus(_id: string) {
+    try {
+      // * consulta aggregate...
+      const arregloAggregate = [
+        {
+          $match: {
+            _id: new Types.ObjectId(_id),
+          },
+        },
+        {
+          $unwind: '$roles',
+        },
+        {
+          $addFields: {
+            usuario_roles: { $toObjectId: '$roles' },
+          },
+        },
+        {
+          $lookup: {
+            from: 'roles',
+            localField: 'usuario_roles',
+            foreignField: '_id',
+            as: 'roles_usuario',
+          },
+        },
+        {
+          $unwind: '$roles_usuario',
+        },
+        {
+          $project: {
+            'roles_usuario.menus': 1,
+          },
+        },
+        {
+          $unwind: '$roles_usuario.menus',
+        },
+        {
+          $addFields: {
+            menus_usuario: { $toObjectId: '$roles_usuario.menus' },
+          },
+        },
+        {
+          $group: {
+            _id: '$_id',
+            menus_usuario: {
+              $push: '$menus_usuario',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'menus',
+            localField: 'menus_usuario',
+            foreignField: '_id',
+            as: 'menus',
+          },
+        },
+        {
+          $project: {
+            menus: 1,
+          },
+        },
+      ];
+      // * busca resultado...
+      return await this.usuariosService.retornaConsultaAggregate(
+        arregloAggregate,
+      );
     } catch (error) {
       throw error;
     }
