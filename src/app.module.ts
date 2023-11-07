@@ -8,10 +8,10 @@ import { MongoModule } from '@modules/mongo/mongo.module';
 import { UsuarioModule } from '@modules/mongo/usuarios/usuario.module';
 import { MenusModule } from '@modules/menus/menus.module';
 import { RolesModule } from '@modules/roles/roles.module';
+import { SeguridadModule } from '@modules/seguridad/seguridad.module';
+import { UsuariosModule } from '@modules/usuarios/usuarios.module';
 
 import { AppService } from './app.service';
-import { SeguridadModule } from './modules/seguridad/seguridad.module';
-import { UsuariosModule } from './controllers/usuarios/usuarios.module';
 
 import config from '@app/libs/config/config';
 
