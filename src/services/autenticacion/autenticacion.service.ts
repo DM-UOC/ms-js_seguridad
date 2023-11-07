@@ -114,14 +114,19 @@ export class AutenticacionService {
   private async retornaTokenUsuario(
     usuarioEntity: UsuarioEntity,
   ): Promise<string> {
-    // * desestructura el objeto...
-    const { usuario } = usuarioEntity;
-    // * payload...
-    const payload = {
-      usuario,
-    };
-    // * retornamos el token...
-    return this.jwtService.sign(payload);
+    try {
+      // * desestructura el objeto...
+      const { _id, usuario } = usuarioEntity;
+      // * payload...
+      const payload = {
+        _id,
+        usuario,
+      };
+      // * retornamos el token...
+      return this.jwtService.sign(payload);
+    } catch (error) {
+      throw error;
+    }
   }
 
   private async validaClave(
@@ -163,7 +168,7 @@ export class AutenticacionService {
   private async verificaCredenciales(
     usuarioEntity: UsuarioEntity,
     codigo: number,
-  ) {
+  ): Promise<string> {
     try {
       // * 1) verifica si el código no ha sufrido intennos fallidos...
       // * si existe, ya ha intentado + de 3 veces, enviamos el error...
@@ -173,7 +178,7 @@ export class AutenticacionService {
         );
       // * si el # de intentos no está excedido...
       // * verificamos el código que ingresa...
-      await this.validaClave(usuarioEntity, codigo);
+      return await this.validaClave(usuarioEntity, codigo);
     } catch (error) {
       throw error;
     }
@@ -216,7 +221,7 @@ export class AutenticacionService {
     }
   }
 
-  async autenticacion(autenticacionDto: AutenticacionDto) {
+  async autenticacion(autenticacionDto: AutenticacionDto): Promise<string> {
     try {
       const { password } = autenticacionDto;
       // * búsqueda por correo...

@@ -36,7 +36,7 @@ production: &default
     llave:
       clave: p@s$$w0Rd/k3Y
     tiempo:
-      caducidad: 60 * 60 # 60 minutos...
+      caducidad: 1h # 60 minutos...
 stage: &stage
   <<: *default
 
