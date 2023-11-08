@@ -224,9 +224,13 @@ export class AutenticacionService {
         },
       ];
       // * busca resultado...
-      return await this.usuariosService.retornaConsultaAggregate(
+      const result = await this.usuariosService.retornaConsultaAggregate(
         arregloAggregate,
       );
+      // * verifica que exista registro...
+      if (result.length > 0) return result[0].menus;
+      // * no existe datos...
+      return [];
     } catch (error) {
       throw error;
     }

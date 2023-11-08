@@ -3,10 +3,10 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AutenticacionController } from '@controllers/autenticacion/autenticacion.controller';
 import { AutenticacionService } from '@services/autenticacion/autenticacion.service';
-import { UsuarioModule } from '../mongo/usuarios/usuario.module';
+import { UsuariosModule } from '@modules/usuarios/usuarios.module';
 
 @Module({
-  imports: [UsuarioModule, ConfigModule],
+  imports: [UsuariosModule, ConfigModule],
   controllers: [AutenticacionController],
   providers: [AutenticacionService],
   exports: [],
