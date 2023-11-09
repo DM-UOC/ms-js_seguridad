@@ -224,7 +224,7 @@ export class AutenticacionService {
         },
       ];
       // * busca resultado...
-      const result = await this.usuariosService.retornaConsultaAggregate(
+      const result: any = await this.usuariosService.retornaConsultaAggregate(
         arregloAggregate,
       );
       // * verifica que exista registro...
