@@ -18,13 +18,4 @@ export class AutenticacionController {
       throw error;
     }
   }
-
-  @MessagePattern({ cmd: 'menus' })
-  async menus(_id: string) {
-    try {
-      return await this.autenticacionService.menus(_id);
-    } catch (error) {
-      throw error;
-    }
-  }
 }

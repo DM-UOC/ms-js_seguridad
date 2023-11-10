@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Types } from 'mongoose';
 
 import { AutenticacionDto } from '@models/autenticacion/dto/autenticacion.dto';
 import { UsuarioEntity } from '@models/usuarios/entities/usuario.entity';
@@ -45,11 +44,11 @@ export class AutenticacionService {
   ): Promise<string> {
     try {
       // * desestructura el objeto...
-      const { _id, usuario, nombre_completo } = usuarioEntity;
+      const { _id, identificacion, nombre_completo } = usuarioEntity;
       // * payload...
       const payload = {
         _id,
-        usuario,
+        identificacion,
         nombre_completo,
       };
       // * retornamos el token...
@@ -160,79 +159,4 @@ export class AutenticacionService {
     }
   }
 
-  async menus(_id: string) {
-    try {
-      // * consulta aggregate...
-      const arregloAggregate = [
-        {
-          $match: {
-            _id: new Types.ObjectId(_id),
-          },
-        },
-        {
-          $unwind: '$roles',
-        },
-        {
-          $addFields: {
-            usuario_roles: { $toObjectId: '$roles' },
-          },
-        },
-        {
-          $lookup: {
-            from: 'roles',
-            localField: 'usuario_roles',
-            foreignField: '_id',
-            as: 'roles_usuario',
-          },
-        },
-        {
-          $unwind: '$roles_usuario',
-        },
-        {
-          $project: {
-            'roles_usuario.menus': 1,
-          },
-        },
-        {
-          $unwind: '$roles_usuario.menus',
-        },
-        {
-          $addFields: {
-            menus_usuario: { $toObjectId: '$roles_usuario.menus' },
-          },
-        },
-        {
-          $group: {
-            _id: '$_id',
-            menus_usuario: {
-              $push: '$menus_usuario',
-            },
-          },
-        },
-        {
-          $lookup: {
-            from: 'menus',
-            localField: 'menus_usuario',
-            foreignField: '_id',
-            as: 'menus',
-          },
-        },
-        {
-          $project: {
-            menus: 1,
-          },
-        },
-      ];
-      // * busca resultado...
-      const result: any = await this.usuariosService.retornaConsultaAggregate(
-        arregloAggregate,
-      );
-      // * verifica que exista registro...
-      if (result.length > 0) return result[0].menus;
-      // * no existe datos...
-      return [];
-    } catch (error) {
-      throw error;
-    }
-  }
 }

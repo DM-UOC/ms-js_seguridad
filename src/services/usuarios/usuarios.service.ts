@@ -29,7 +29,7 @@ export class UsuariosService {
           $set: {
             'claves.$[clave].auditoria': {
               fecha_actualiza: new Date(),
-              usuario_actualiza: usuarioEntity.usuario,
+              usuario_actualiza: usuarioEntity.identificacion,
             },
           },
           $inc: {
@@ -65,7 +65,7 @@ export class UsuariosService {
             'claves.$[clave].activo': false,
             'claves.$[clave].auditoria': {
               fecha_actualiza: new Date(),
-              usuario_actualiza: usuarioEntity.usuario,
+              usuario_actualiza: usuarioEntity.identificacion,
             },
           },
         },
@@ -97,8 +97,12 @@ export class UsuariosService {
     }
   }
 
-  create(createUsuarioDto: CreateUsuarioDto) {
-    return 'This action adds a new usuario';
+  createBBBB(createUsuarioDto: CreateUsuarioDto) {
+    try {
+      return this.usuarioEntity.create(createUsuarioDto);
+    } catch (error) {
+      throw error;
+    }
   }
 
   findAll() {

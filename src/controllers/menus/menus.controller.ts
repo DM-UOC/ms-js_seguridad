@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
 
 import { CreateMenuDto } from '@models/menus/dto/create-menu.dto';
 import { UpdateMenuDto } from '@models/menus/dto/update-menu.dto';
@@ -15,6 +16,15 @@ import { MenusService } from '@services/menus/menus.service';
 @Controller('menus')
 export class MenusController {
   constructor(private readonly menusService: MenusService) {}
+
+  @MessagePattern({ cmd: 'menus' })
+  async menus(_id: string) {
+    try {
+      return await this.menusService.menus(_id);
+    } catch (error) {
+      throw error;
+    }
+  }
 
   @Post()
   create(@Body() createMenuDto: CreateMenuDto) {

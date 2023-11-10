@@ -7,22 +7,18 @@ import { PinCodigoEntity } from '@models/usuarios/entities/pincodigo.entity';
 
 export class UsuarioEntity {
   readonly _id: ObjectId;
+  @prop({ default: '' })
+  identificacion!: string;
   @prop({})
-  nombre!: string;
-  @prop({})
-  apellido!: string;
-  @prop({})
-  nombre_completo: string;
-  @prop({})
-  usuario!: string;
-  @prop({ type: PinCodigoEntity, default: [] })
-  claves!: PinCodigoEntity[];
+  nombre_completo!: string;
   @prop({})
   direccion!: string;
+  @prop({ type: PinCodigoEntity, default: [] })
+  claves?: PinCodigoEntity[];
   @prop({ default: [] })
-  roles: string[];
+  roles?: string[];
   @prop({ type: CorreoEntity, default: [] })
-  correos: CorreoEntity[];
+  correos?: CorreoEntity[];
   @prop({ type: AuditoriaEntity, _id: false })
   auditoria: AuditoriaEntity;
 }

@@ -3,10 +3,15 @@ import { ConfigModule } from '@nestjs/config';
 import { TypegooseModule } from 'nestjs-typegoose';
 
 import { MenusController } from '@controllers/menus/menus.controller';
+
 import { MenuEntity } from '@models/menus/entities/menu.entity';
+
+import { UsuariosModule } from '@modules/usuarios/usuarios.module';
+
 import { MenusService } from '@services/menus/menus.service';
 
 import config from '@app/libs/config/config';
+
 @Module({
   imports: [
     TypegooseModule.forFeature(
@@ -21,6 +26,7 @@ import config from '@app/libs/config/config';
       ],
       config().servidor.mongo.coopeartiva.nombre,
     ),
+    UsuariosModule,
     ConfigModule,
   ],
   controllers: [MenusController],
