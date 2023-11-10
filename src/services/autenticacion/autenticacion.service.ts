@@ -48,8 +48,8 @@ export class AutenticacionService {
       // * payload...
       const payload = {
         _id,
-        identificacion,
-        nombre_completo,
+        usuario: identificacion,
+        nombres: nombre_completo,
       };
       // * retornamos el token...
       return this.jwtService.sign(payload);
@@ -158,5 +158,4 @@ export class AutenticacionService {
       throw error;
     }
   }
-
 }

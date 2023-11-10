@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -21,11 +20,15 @@ export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
   @MessagePattern({ cmd: 'crear_usuario' })
-  createAAAAA(@Body() createUsuarioDto: CreateUsuarioDto) {
-    return this.usuariosService.createBBBB(createUsuarioDto);
+  create(@Body() createUsuarioDto: CreateUsuarioDto) {
+    try {
+      return this.usuariosService.create(createUsuarioDto);
+    } catch (error) {
+      throw error;
+    }
   }
 
-  @Get()
+  @MessagePattern({ cmd: 'listado_usuarios' })
   findAll() {
     return this.usuariosService.findAll();
   }

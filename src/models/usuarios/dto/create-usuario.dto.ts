@@ -1,5 +1,6 @@
 export class CreateUsuarioDto {
-  readonly identificacion!: string;
-  readonly nombre_completo!: string;
-  readonly direccion!: string;
+  identificacion?: string;
+  nombre_completo?: string;
+  direccion?: string;
+  usuario?: string;
 }

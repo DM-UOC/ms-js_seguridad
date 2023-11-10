@@ -6,6 +6,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { CreateUsuarioDto } from '@models/usuarios/dto/create-usuario.dto';
 import { UpdateUsuarioDto } from '@models/usuarios/dto/update-usuario.dto';
 import { UsuarioEntity } from '@models/usuarios/entities/usuario.entity';
+import { AuditoriaEntity } from '@app/src/models/auditoria/auditoria.entity';
 
 @Injectable()
 export class UsuariosService {
@@ -97,16 +98,39 @@ export class UsuariosService {
     }
   }
 
-  createBBBB(createUsuarioDto: CreateUsuarioDto) {
+  create(createUsuarioDto: CreateUsuarioDto) {
     try {
-      return this.usuarioEntity.create(createUsuarioDto);
+      // * recoge el usuario...
+      const { identificacion, nombre_completo, direccion, usuario } =
+        createUsuarioDto;
+      // * registrando el usuario...
+      return this.usuarioEntity.create({
+        identificacion,
+        nombre_completo,
+        direccion,
+        auditoria: {
+          usuario_ingresa: usuario,
+        },
+      });
     } catch (error) {
       throw error;
     }
   }
 
   findAll() {
-    return `This action returns all usuarios`;
+    try {
+      // * filtro...
+      const filtro = {
+        identificacion: {
+          $nin: ['SUP-ADM'],
+        },
+        'auditoria.activo': true,
+      };
+      // * retorna arreglo...
+      return this.usuarioEntity.find(filtro);
+    } catch (error) {
+      throw error;
+    }
   }
 
   findOne(id: number) {

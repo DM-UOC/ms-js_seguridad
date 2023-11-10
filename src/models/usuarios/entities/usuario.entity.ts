@@ -13,12 +13,14 @@ export class UsuarioEntity {
   nombre_completo!: string;
   @prop({})
   direccion!: string;
+  @prop({})
+  imagen?: string;
   @prop({ type: PinCodigoEntity, default: [] })
   claves?: PinCodigoEntity[];
   @prop({ default: [] })
   roles?: string[];
   @prop({ type: CorreoEntity, default: [] })
   correos?: CorreoEntity[];
-  @prop({ type: AuditoriaEntity, _id: false })
-  auditoria: AuditoriaEntity;
+  @prop({ type: AuditoriaEntity, _id: false, default: new AuditoriaEntity() })
+  auditoria?: AuditoriaEntity;
 }

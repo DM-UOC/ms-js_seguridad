@@ -11,6 +11,8 @@ import { RolesModule } from '@modules/roles/roles.module';
 import { SeguridadModule } from '@modules/seguridad/seguridad.module';
 import { UsuariosModule } from '@modules/usuarios/usuarios.module';
 
+import { UtilitariosService } from '@services/utilitarios/utilitarios.service';
+
 import { AppService } from './app.service';
 
 import config from '@app/libs/config/config';
@@ -29,6 +31,6 @@ import config from '@app/libs/config/config';
     UsuariosModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, UtilitariosService],
 })
 export class AppModule {}
