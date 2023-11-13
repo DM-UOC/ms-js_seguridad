@@ -6,7 +6,7 @@ import { AuditoriaEntity } from '@models/auditoria/auditoria.entity';
 export class RoleEntity {
   readonly _id: ObjectId;
   @prop()
-  description!: string;
+  descripcion!: string;
   @prop({})
   menus!: string[];
   @prop({ type: AuditoriaEntity, _id: false })

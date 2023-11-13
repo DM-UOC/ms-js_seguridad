@@ -38,9 +38,15 @@ export class UsuariosController {
     return this.usuariosService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuariosService.update(+id, updateUsuarioDto);
+  @MessagePattern({ cmd: 'editar_usuario' })
+  update(
+    @Body() updateUsuarioDto: UpdateUsuarioDto
+  ) {
+    try {
+      return this.usuariosService.update(updateUsuarioDto);
+    } catch (error) {
+      throw error;
+    }    
   }
 
   @Delete(':id')

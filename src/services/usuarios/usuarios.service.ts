@@ -7,6 +7,7 @@ import { CreateUsuarioDto } from '@models/usuarios/dto/create-usuario.dto';
 import { UpdateUsuarioDto } from '@models/usuarios/dto/update-usuario.dto';
 import { UsuarioEntity } from '@models/usuarios/entities/usuario.entity';
 import { AuditoriaEntity } from '@app/src/models/auditoria/auditoria.entity';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class UsuariosService {
@@ -137,8 +138,32 @@ export class UsuariosService {
     return `This action returns a #${id} usuario`;
   }
 
-  update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-    return `This action updates a #${id} usuario`;
+  update(updateUsuarioDto: UpdateUsuarioDto) {
+    try {
+      // * recoge el usuario...
+      const { _id, identificacion, nombre_completo, direccion, 
+        usuario, roles } =
+      updateUsuarioDto;
+      // * registrando el usuario...
+      return this.usuarioEntity.findByIdAndUpdate({ 
+        _id: new Types.ObjectId(_id)
+      }, {
+        $set: {
+          identificacion,
+          nombre_completo,
+          direccion,
+          roles,
+          auditoria: {
+            fecha_actualiza: new Date(),
+            usuario_actualiza: usuario
+          }  
+        }
+      }, {
+        new: true
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   remove(id: number) {
