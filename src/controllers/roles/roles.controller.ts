@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Body, Param, Delete } from '@nestjs/common';
 
 import { CreateRoleDto } from '@models/roles/dto/create-role.dto';
 import { UpdateRoleDto } from '@models/roles/dto/update-role.dto';
@@ -19,13 +11,11 @@ export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
   @MessagePattern({ cmd: 'crear_rol' })
-  @Post()
   create(@Body() createRoleDto: CreateRoleDto) {
     return this.rolesService.create(createRoleDto);
   }
 
   @MessagePattern({ cmd: 'listado_roles' })
-  @Get()
   findAll() {
     return this.rolesService.findAll();
   }
@@ -36,7 +26,6 @@ export class RolesController {
   }
 
   @MessagePattern({ cmd: 'editar_rol' })
-  @Patch()
   update(@Body() updateRoleDto: UpdateRoleDto) {
     return this.rolesService.update(updateRoleDto);
   }

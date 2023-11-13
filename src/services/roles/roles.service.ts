@@ -9,7 +9,6 @@ import { Types } from 'mongoose';
 
 @Injectable()
 export class RolesService {
-
   constructor(
     @InjectModel(RoleEntity)
     private readonly roleEntity: ReturnModelType<typeof RoleEntity>,
@@ -56,13 +55,17 @@ export class RolesService {
       // * desestructura el id...
       const { _id } = updateRoleDto;
       // * actualiza el objeto...
-      return this.roleEntity.updateOne({
-        _id: new Types.ObjectId(_id)
-      }, {
-        $set: updateRoleDto
-      }, {
-        new: true,
-      })
+      return this.roleEntity.updateOne(
+        {
+          _id: new Types.ObjectId(_id),
+        },
+        {
+          $set: updateRoleDto,
+        },
+        {
+          new: true,
+        },
+      );
     } catch (error) {
       throw error;
     }

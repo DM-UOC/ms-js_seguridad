@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Body, Param, Delete } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 
 import { CreateMenuDto } from '@models/menus/dto/create-menu.dto';
@@ -17,7 +9,7 @@ import { MenusService } from '@services/menus/menus.service';
 export class MenusController {
   constructor(private readonly menusService: MenusService) {}
 
-  @MessagePattern({ cmd: 'menus' })
+  @MessagePattern({ cmd: 'usuario_menus' })
   async menus(_id: string) {
     try {
       return await this.menusService.menus(_id);
@@ -26,12 +18,12 @@ export class MenusController {
     }
   }
 
-  @Post()
+  @MessagePattern({ cmd: 'crear_menu' })
   create(@Body() createMenuDto: CreateMenuDto) {
     return this.menusService.create(createMenuDto);
   }
 
-  @Get()
+  @MessagePattern({ cmd: 'listado_menus' })
   findAll() {
     return this.menusService.findAll();
   }
@@ -41,9 +33,9 @@ export class MenusController {
     return this.menusService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMenuDto: UpdateMenuDto) {
-    return this.menusService.update(+id, updateMenuDto);
+  @MessagePattern({ cmd: 'editar_menu' })
+  update(@Body() updateMenuDto: UpdateMenuDto) {
+    return this.menusService.update(updateMenuDto);
   }
 
   @Delete(':id')
