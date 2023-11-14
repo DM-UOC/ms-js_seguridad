@@ -8,8 +8,8 @@ export class MenuEntity {
   readonly _id: ObjectId;
   @prop({})
   descripcion!: string;
-  @prop({ _id: false, type: SubMenuEntity, default: [] })
+  @prop({ type: SubMenuEntity, default: [] })
   submenus?: SubMenuEntity[];
-  @prop({ type: AuditoriaEntity })
+  @prop({ type: AuditoriaEntity, _id: false })
   auditoria!: AuditoriaEntity;
 }

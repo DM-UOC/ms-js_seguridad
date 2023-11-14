@@ -10,6 +10,7 @@ import { MenusModule } from '@modules/menus/menus.module';
 import { RolesModule } from '@modules/roles/roles.module';
 import { SeguridadModule } from '@modules/seguridad/seguridad.module';
 import { UsuariosModule } from '@modules/usuarios/usuarios.module';
+import { SubmenusModule } from '@modules/submenus/submenus.module';
 
 import { UtilitariosService } from '@services/utilitarios/utilitarios.service';
 
@@ -29,6 +30,7 @@ import config from '@app/libs/config/config';
     RolesModule,
     SeguridadModule,
     UsuariosModule,
+    SubmenusModule,
   ],
   controllers: [AppController],
   providers: [AppService, UtilitariosService],

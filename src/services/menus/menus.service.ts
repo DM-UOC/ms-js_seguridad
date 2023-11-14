@@ -94,7 +94,19 @@ export class MenusService {
   }
 
   create(createMenuDto: CreateMenuDto) {
-    return 'This action adds a new menu';
+    try {
+      // * recoge el usuario...
+      const { descripcion, usuario } = createMenuDto;
+      // * registrando el usuario...
+      return this.menuEntity.create({
+        descripcion,
+        auditoria: {
+          usuario_ingresa: usuario,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   findAll() {
