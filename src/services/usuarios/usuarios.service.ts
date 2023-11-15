@@ -133,8 +133,18 @@ export class UsuariosService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} usuario`;
+  findOne(identificacion: string) {
+    try {
+      // * filtro...
+      const filtro = {
+        identificacion,
+        'auditoria.activo': true,
+      };
+      // * retorna arreglo...
+      return this.usuarioEntity.findOne(filtro);
+    } catch (error) {
+      throw error;
+    }
   }
 
   update(updateUsuarioDto: UpdateUsuarioDto) {

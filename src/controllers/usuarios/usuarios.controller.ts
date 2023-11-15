@@ -33,20 +33,18 @@ export class UsuariosController {
     return this.usuariosService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usuariosService.findOne(+id);
+  @MessagePattern({ cmd: 'identificacion_usuario' })
+  findOne(@Body() id: string) {
+    return this.usuariosService.findOne(id);
   }
 
   @MessagePattern({ cmd: 'editar_usuario' })
-  update(
-    @Body() updateUsuarioDto: UpdateUsuarioDto
-  ) {
+  update(@Body() updateUsuarioDto: UpdateUsuarioDto) {
     try {
       return this.usuariosService.update(updateUsuarioDto);
     } catch (error) {
       throw error;
-    }    
+    }
   }
 
   @Delete(':id')
