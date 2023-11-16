@@ -38,10 +38,33 @@ export class UsuariosController {
     return this.usuariosService.findOne(id);
   }
 
+  @MessagePattern({ cmd: 'verifica_correo_usuarios' })
+  encuentraUnicoCorreo(@Body() correo: string) {
+    return this.usuariosService.encuentraUnicoCorreo(correo);
+  }
+
   @MessagePattern({ cmd: 'editar_usuario' })
   update(@Body() updateUsuarioDto: UpdateUsuarioDto) {
     try {
       return this.usuariosService.update(updateUsuarioDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: 'registro_inicial_usuario' })
+  actualizaRegistroInicial(@Body() updateUsuarioDto: UpdateUsuarioDto) {
+    try {
+      return this.usuariosService.actualiazaRegistroInicial(updateUsuarioDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: 'registro_pin_usuario' })
+  actualiazaPin(@Body() updateUsuarioDto: UpdateUsuarioDto) {
+    try {
+      return this.usuariosService.actualiazaPin(updateUsuarioDto);
     } catch (error) {
       throw error;
     }

@@ -133,6 +133,11 @@ export class UsuariosService {
     }
   }
 
+  private retornaConsultaUnico(filtro: object) {
+    // * retorna arreglo...
+    return this.usuarioEntity.findOne(filtro);
+  }
+
   findOne(identificacion: string) {
     try {
       // * filtro...
@@ -140,8 +145,23 @@ export class UsuariosService {
         identificacion,
         'auditoria.activo': true,
       };
-      // * retorna arreglo...
-      return this.usuarioEntity.findOne(filtro);
+      // * retorna la consutla...
+      return this.retornaConsultaUnico(filtro);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  encuentraUnicoCorreo(correo: string) {
+    try {
+      // * filtro...
+      const filtro = {
+        'correos.correo': correo,
+        'correos.principal': true,
+        'correos.auditoria.activo': true,
+      };
+      // * retorna la consutla...
+      return this.retornaConsultaUnico(filtro);
     } catch (error) {
       throw error;
     }
@@ -173,6 +193,72 @@ export class UsuariosService {
               fecha_actualiza: new Date(),
               usuario_actualiza: usuario,
             },
+          },
+        },
+        {
+          new: true,
+        },
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  actualiazaRegistroInicial(
+    updateUsuarioDto: UpdateUsuarioDto,
+  ): Promise<UsuarioEntity> {
+    try {
+      // * recoge el usuario...
+      const { _id, claves, correos, identificacion } = updateUsuarioDto;
+      // * actualizando información auditoria...
+      // * correos...
+      correos[0]['auditoria'] = {
+        fecha_actualiza: new Date(),
+        usuario_actualiza: identificacion,
+      };
+      // * claves...
+      claves[0]['auditoria'] = {
+        fecha_actualiza: new Date(),
+        usuario_actualiza: identificacion,
+      };
+      // * retorna resultado...
+      return this.usuarioEntity.findByIdAndUpdate(
+        {
+          _id: new Types.ObjectId(_id),
+        },
+        {
+          $push: {
+            correos,
+            claves,
+          },
+        },
+        {
+          new: true,
+        },
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  actualiazaPin(updateUsuarioDto: UpdateUsuarioDto): Promise<UsuarioEntity> {
+    try {
+      // * recoge el usuario...
+      const { _id, claves, identificacion } = updateUsuarioDto;
+      // * actualizando información auditoria...
+      // * claves...
+      claves[0]['auditoria'] = {
+        fecha_actualiza: new Date(),
+        usuario_actualiza: identificacion,
+      };
+      // * retorna resultado...
+      return this.usuarioEntity.findByIdAndUpdate(
+        {
+          _id: new Types.ObjectId(_id),
+        },
+        {
+          $push: {
+            claves,
           },
         },
         {
