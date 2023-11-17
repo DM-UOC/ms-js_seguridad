@@ -53,14 +53,21 @@ export class RolesService {
   update(updateRoleDto: UpdateRoleDto) {
     try {
       // * desestructura el id...
-      const { _id } = updateRoleDto;
+      const { _id, descripcion, menus, usuario } = updateRoleDto;
       // * actualiza el objeto...
-      return this.roleEntity.updateOne(
+      return this.roleEntity.findByIdAndUpdate(
         {
           _id: new Types.ObjectId(_id),
         },
         {
-          $set: updateRoleDto,
+          $set: {
+            descripcion,
+            menus,
+            auditoria: {
+              fecha_actualiza: new Date(),
+              usuario_actualiza: usuario,
+            },
+          },
         },
         {
           new: true,

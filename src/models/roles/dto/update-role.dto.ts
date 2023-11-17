@@ -3,4 +3,5 @@ import { CreateRoleDto } from './create-role.dto';
 
 export class UpdateRoleDto extends PartialType(CreateRoleDto) {
   readonly _id: string;
+  readonly menus?: string[];
 }
