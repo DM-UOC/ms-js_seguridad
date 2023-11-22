@@ -9,9 +9,12 @@ import {
 } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 
-import { ExceptionFilter } from '@app/src/filters/exception-filter/exception-filter';
+import { ExceptionFilter } from '@filters/exception-filter/exception-filter';
+
 import { CreateUsuarioDto } from '@models/usuarios/dto/create-usuario.dto';
 import { UpdateUsuarioDto } from '@models/usuarios/dto/update-usuario.dto';
+import { ActualizaUsuarioImagenDto } from '@models/usuarios/dto/actualiza-usuarioimagen.dto';
+
 import { UsuariosService } from '@services/usuarios/usuarios.service';
 
 @UseFilters(new ExceptionFilter())
@@ -65,6 +68,15 @@ export class UsuariosController {
   actualiazaPin(@Body() updateUsuarioDto: UpdateUsuarioDto) {
     try {
       return this.usuariosService.actualiazaPin(updateUsuarioDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: 'imagen_usuario' })
+  actualiazaImagen(@Body() actualizaUsuarioImagenDto: ActualizaUsuarioImagenDto) {
+    try {
+      return this.usuariosService.actualizaImagen(actualizaUsuarioImagenDto);
     } catch (error) {
       throw error;
     }

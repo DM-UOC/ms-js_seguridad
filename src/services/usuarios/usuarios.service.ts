@@ -7,6 +7,7 @@ import { CreateUsuarioDto } from '@models/usuarios/dto/create-usuario.dto';
 import { UpdateUsuarioDto } from '@models/usuarios/dto/update-usuario.dto';
 import { UsuarioEntity } from '@models/usuarios/entities/usuario.entity';
 import { Types } from 'mongoose';
+import { ActualizaUsuarioImagenDto } from '@app/src/models/usuarios/dto/actualiza-usuarioimagen.dto';
 
 @Injectable()
 export class UsuariosService {
@@ -273,4 +274,32 @@ export class UsuariosService {
   remove(id: number) {
     return `This action removes a #${id} usuario`;
   }
+
+  actualizaImagen(actualizaUsuarioImagenDto: ActualizaUsuarioImagenDto) {
+    try {
+      // * recoge el usuario...
+      const { _id, imagen, identificacion } = actualizaUsuarioImagenDto;      
+      // * retorna resultado...
+      return this.usuarioEntity.findByIdAndUpdate(
+        {
+          _id: new Types.ObjectId(_id),
+        },
+        {
+          $set: {
+            imagen,
+            auditoria: {
+              fecha_actualiza: new Date(),
+              usuario_actualiza: identificacion,
+            }
+          },
+        },
+        {
+          new: true,
+        },
+      );      
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }
