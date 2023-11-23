@@ -8,6 +8,7 @@ import { UpdateUsuarioDto } from '@models/usuarios/dto/update-usuario.dto';
 import { UsuarioEntity } from '@models/usuarios/entities/usuario.entity';
 import { Types } from 'mongoose';
 import { ActualizaUsuarioImagenDto } from '@app/src/models/usuarios/dto/actualiza-usuarioimagen.dto';
+import { UtilitariosService } from '../utilitarios/utilitarios.service';
 
 @Injectable()
 export class UsuariosService {
@@ -278,7 +279,7 @@ export class UsuariosService {
   actualizaImagen(actualizaUsuarioImagenDto: ActualizaUsuarioImagenDto) {
     try {
       // * recoge el usuario...
-      const { _id, imagen, identificacion } = actualizaUsuarioImagenDto;      
+      const { _id, imagen, identificacion } = actualizaUsuarioImagenDto;
       // * retorna resultado...
       return this.usuarioEntity.findByIdAndUpdate(
         {
@@ -290,16 +291,15 @@ export class UsuariosService {
             auditoria: {
               fecha_actualiza: new Date(),
               usuario_actualiza: identificacion,
-            }
+            },
           },
         },
         {
           new: true,
         },
-      );      
+      );
     } catch (error) {
       throw error;
     }
   }
-
 }

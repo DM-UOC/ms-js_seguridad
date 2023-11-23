@@ -11,7 +11,7 @@ export class ActualizaUsuarioImagenDto {
     path: string; // * "/home/usuario/Proyectos/nodejs/servidor/server_cf/api-enlace-cooperativa/public/13561656232/13561656232.jpeg"
     size: number; // * 131101
     url: string;
-    buffer: Buffer;
+    base64: string;
   };
   readonly usuario?: string;
 }

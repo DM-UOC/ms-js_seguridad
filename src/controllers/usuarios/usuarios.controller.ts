@@ -74,7 +74,9 @@ export class UsuariosController {
   }
 
   @MessagePattern({ cmd: 'imagen_usuario' })
-  actualiazaImagen(@Body() actualizaUsuarioImagenDto: ActualizaUsuarioImagenDto) {
+  actualiazaImagen(
+    @Body() actualizaUsuarioImagenDto: ActualizaUsuarioImagenDto,
+  ) {
     try {
       return this.usuariosService.actualizaImagen(actualizaUsuarioImagenDto);
     } catch (error) {

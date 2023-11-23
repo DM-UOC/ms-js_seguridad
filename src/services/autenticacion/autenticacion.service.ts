@@ -47,7 +47,7 @@ export class AutenticacionService {
       const { _id, identificacion, nombre_completo } = usuarioEntity;
       // * payload...
       const payload = {
-        _id,
+        id: _id,
         usuario: identificacion,
         nombres: nombre_completo,
       };

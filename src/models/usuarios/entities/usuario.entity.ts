@@ -16,7 +16,7 @@ export class UsuarioEntity {
   direccion!: string;
   @prop({ type: ImagenEntity, _id: false })
   imagen?: ImagenEntity;
-  @prop({ type: PinCodigoEntity, default: [] })
+  @prop({ type: PinCodigoEntity, default: [], select: false })
   claves?: PinCodigoEntity[];
   @prop({ default: [] })
   roles?: string[];

@@ -21,6 +21,8 @@ export class ImagenEntity {
   size: number; // * 131101
   @prop({ default: '' })
   url!: string;
+  @prop({ default: '' })
+  base64!: string;
   @prop({ type: AuditoriaEntity, _id: false })
   auditoria: AuditoriaEntity;
 }
