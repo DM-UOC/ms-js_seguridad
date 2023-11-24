@@ -6,7 +6,7 @@ import { SubMenuEntity } from '@models/menus/entities/submenu.entity';
 
 export class MenuEntity {
   readonly _id: ObjectId;
-  @prop({})
+  @prop({ uppercase: true })
   descripcion!: string;
   @prop({ type: SubMenuEntity, default: [] })
   submenus?: SubMenuEntity[];

@@ -3,10 +3,10 @@ import { ObjectId } from 'mongoose';
 
 export class SubMenuEntity {
   readonly _id: ObjectId;
-  @prop({})
+  @prop({ uppercase: true })
   descripcion: string;
-  @prop({})
+  @prop({ lowercase: true })
   enlace: string;
-  @prop({})
+  @prop({ lowercase: true })
   icono: string;
 }
