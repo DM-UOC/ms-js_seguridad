@@ -20,8 +20,15 @@ export class UsuarioEntity {
   claves?: PinCodigoEntity[];
   @prop({ default: [] })
   roles?: string[];
+  @prop({ default: [] })
+  telefonos?: string[];
   @prop({ type: CorreoEntity, default: [] })
   correos?: CorreoEntity[];
-  @prop({ type: AuditoriaEntity, _id: false, default: new AuditoriaEntity() })
+  @prop({
+    type: AuditoriaEntity,
+    _id: false,
+    default: new AuditoriaEntity(),
+    select: false,
+  })
   auditoria?: AuditoriaEntity;
 }
