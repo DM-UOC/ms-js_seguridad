@@ -103,13 +103,14 @@ export class UsuariosService {
   create(createUsuarioDto: CreateUsuarioDto) {
     try {
       // * recoge el usuario...
-      const { identificacion, nombre_completo, direccion, usuario } =
+      const { identificacion, nombre_completo, direccion, usuario, telefonos } =
         createUsuarioDto;
       // * registrando el usuario...
       return this.usuarioEntity.create({
         identificacion,
         nombre_completo,
         direccion,
+        telefonos,
         auditoria: {
           usuario_ingresa: usuario,
         },
@@ -179,6 +180,7 @@ export class UsuariosService {
         direccion,
         usuario,
         roles,
+        telefonos,
       } = updateUsuarioDto;
       // * registrando el usuario...
       return this.usuarioEntity.findByIdAndUpdate(
@@ -191,6 +193,7 @@ export class UsuariosService {
             nombre_completo,
             direccion,
             roles,
+            telefonos,
             auditoria: {
               fecha_actualiza: new Date(),
               usuario_actualiza: usuario,
