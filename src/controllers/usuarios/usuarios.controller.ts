@@ -17,6 +17,9 @@ import { ActualizaUsuarioImagenDto } from '@models/usuarios/dto/actualiza-usuari
 
 import { UsuariosService } from '@services/usuarios/usuarios.service';
 
+import config from '@app/libs/config/config';
+import { RegistraUsuarioCorreoDto } from '@app/src/models/usuarios/dto/registra-usuariocorreo.dto';
+
 @UseFilters(new ExceptionFilter())
 @Controller('usuarios')
 export class UsuariosController {
@@ -79,6 +82,21 @@ export class UsuariosController {
   ) {
     try {
       return this.usuariosService.actualizaImagen(actualizaUsuarioImagenDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({
+    cmd: config().microservicios.seguridad.procesos.usuario.correo.registrar,
+  })
+  async registraCorreo(
+    @Body() registraUsuarioCorreoDto: RegistraUsuarioCorreoDto,
+  ) {
+    try {
+      return await this.usuariosService.registraCorreo(
+        registraUsuarioCorreoDto,
+      );
     } catch (error) {
       throw error;
     }

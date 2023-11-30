@@ -12,31 +12,45 @@ production: &default
         basedatos: MONGO_DB
         usuario: MONGO_USUARIO
         clave: MONGO_CLAVE
-  cadenas:
-    mensajes:
-      dominio:
-        presidencia: '@presidencia.gob.ec'
-      archivos:
-        nombrePdf:
-          comun: firmado
-        extension:
-          png: .png
-      firmas:
-        firmadopor: Firmado por
-        fecha: Fecha
-        digital:
-          razon: Firma Documento
-          localizacion: Presidencia de la Repùblica
-      qr:
-        colores:
-          dark: '#00F'
-          light: '#0000'
   seguridad:
     secreto: 933593b7aedb2c018fab87fb5ada6a2c
     llave:
       clave: p@s$$w0Rd/k3Y
     tiempo:
       caducidad: 1h # 60 minutos...
+  microservicios:
+    seguridad:
+      alias: MS_SEGURIDAD
+      nombre: dc_js_msseguridad
+      puerto: 3001
+      procesos:
+        autenticacion: autenticacion
+        menus:
+          usuario: usuario_menus
+          listado: listado_menus
+          crear: crear_menu
+          editar: editar_menu
+        submenus:
+          listado: listado_submenus
+          crear: crear_submenu
+          editar: editar_submenu
+        usuarios:
+          listado: listado_usuarios
+          crear: crear_usuario
+          editar: editar_usuario
+          correo:
+            unico: verifica_correo_usuarios
+        usuario:
+          identificacion: identificacion_usuario
+          inicial: registro_inicial_usuario
+          pin: registro_pin_usuario
+          imagen: imagen_usuario
+          correo:
+            registrar: correo_registrar_usuario
+        roles:
+          listado: listado_roles
+          crear: crear_rol
+          editar: editar_rol
 stage: &stage
   <<: *default
 
@@ -46,3 +60,36 @@ test: &latest
 development:
   <<: *latest
   environment: development
+  microservicios:
+    seguridad:
+      alias: MS_SEGURIDAD
+      nombre: '0.0.0.0'
+      puerto: 3001
+      procesos:
+        autenticacion: autenticacion
+        menus:
+          usuario: usuario_menus
+          listado: listado_menus
+          crear: crear_menu
+          editar: editar_menu
+        submenus:
+          listado: listado_submenus
+          crear: crear_submenu
+          editar: editar_submenu
+        usuarios:
+          listado: listado_usuarios
+          crear: crear_usuario
+          editar: editar_usuario
+          correo:
+            unico: verifica_correo_usuarios
+        usuario:
+          identificacion: identificacion_usuario
+          inicial: registro_inicial_usuario
+          pin: registro_pin_usuario
+          imagen: imagen_usuario
+          correo:
+            registrar: correo_registrar_usuario
+        roles:
+          listado: listado_roles
+          crear: crear_rol
+          editar: editar_rol

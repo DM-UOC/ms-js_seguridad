@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'nestjs-typegoose';
 import { RpcException } from '@nestjs/microservices';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { Types } from 'mongoose';
 
 import { CreateUsuarioDto } from '@models/usuarios/dto/create-usuario.dto';
 import { UpdateUsuarioDto } from '@models/usuarios/dto/update-usuario.dto';
 import { UsuarioEntity } from '@models/usuarios/entities/usuario.entity';
-import { Types } from 'mongoose';
-import { ActualizaUsuarioImagenDto } from '@app/src/models/usuarios/dto/actualiza-usuarioimagen.dto';
-import { UtilitariosService } from '../utilitarios/utilitarios.service';
+import { ActualizaUsuarioImagenDto } from '@models/usuarios/dto/actualiza-usuarioimagen.dto';
+import { RegistraUsuarioCorreoDto } from '@models/usuarios/dto/registra-usuariocorreo.dto';
 
 @Injectable()
 export class UsuariosService {
@@ -294,6 +294,73 @@ export class UsuariosService {
             auditoria: {
               fecha_actualiza: new Date(),
               usuario_actualiza: identificacion,
+            },
+          },
+        },
+        {
+          new: true,
+        },
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async inhabilitaCorreos(
+    registraUsuarioCorreoDto: RegistraUsuarioCorreoDto,
+  ) {
+    try {
+      // * recoge el usuario...
+      const { usuario_id, usuario } = registraUsuarioCorreoDto;
+      // * incrementa el # de intentos...
+      return await this.usuarioEntity.updateOne(
+        {
+          _id: new Types.ObjectId(usuario_id),
+        },
+        {
+          $set: {
+            'correos.$[].principal': false,
+            'correos.$[].auditoria': {
+              fecha_actualiza: new Date(),
+              usuario_actualiza: usuario,
+            },
+          },
+        },
+        {
+          new: true,
+        },
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async registraCorreo(registraUsuarioCorreoDto: RegistraUsuarioCorreoDto) {
+    try {
+      // * recoge el usuario...
+      const { usuario_id, correo, usuario } = registraUsuarioCorreoDto;
+      // * agregando datos de la auditoria dinámicamente...
+      correo['auditoria'] = {
+        fecha_actualiza: new Date(),
+        usuario_actualiza: usuario,
+      };
+      // * verifica si el correo quiere que sea principal....
+      // * actualiza el resto de correos a false...
+      // eslint-disable-next-line prettier/prettier
+      if(correo.principal) await this.inhabilitaCorreos(registraUsuarioCorreoDto);
+      // * retorna resultado...
+      return await this.usuarioEntity.findOneAndUpdate(
+        {
+          _id: new Types.ObjectId(usuario_id),
+        },
+        {
+          $push: {
+            correos: correo,
+          },
+          $set: {
+            auditoria: {
+              fecha_actualiza: new Date(),
+              usuario_actualiza: usuario,
             },
           },
         },
