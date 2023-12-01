@@ -372,4 +372,12 @@ export class UsuariosService {
       throw error;
     }
   }
+
+  cambiaEstadoCorreo() {
+    try {
+      
+    } catch (error) {
+      throw error;
+    }
+  }
 }
