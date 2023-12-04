@@ -14,12 +14,12 @@ import { ExceptionFilter } from '@filters/exception-filter/exception-filter';
 import { CreateUsuarioDto } from '@models/usuarios/dto/create-usuario.dto';
 import { UpdateUsuarioDto } from '@models/usuarios/dto/update-usuario.dto';
 import { ActualizaUsuarioImagenDto } from '@models/usuarios/dto/actualiza-usuarioimagen.dto';
-import { RegistraUsuarioCorreoDto } from '@models/usuarios/dto/registra-usuariocorreo.dto';
-import { ActualizaUsuarioCorreoDto } from '@models/usuarios/dto/actualiza-usuario.correo.dto';
 
 import { UsuariosService } from '@services/usuarios/usuarios.service';
 
 import config from '@app/libs/config/config';
+import { RegistraUsuarioCorreoDto } from '@app/src/models/usuarios/dto/registra-usuariocorreo.dto';
+import { ActualizaUsuarioCorreoDto } from '@app/src/models/usuarios/dto/actualiza-usuario.correo.dto';
 
 @UseFilters(new ExceptionFilter())
 @Controller('usuarios')
@@ -106,13 +106,11 @@ export class UsuariosController {
   @MessagePattern({
     cmd: config().microservicios.seguridad.procesos.usuario.correo.editar,
   })
-  async edidtarCorreo(
-    @Body() actualizaUsuarioCorreoDto: ActualizaUsuarioCorreoDto
+  async editarCorreo(
+    @Body() actualizaUsuarioCorreoDto: ActualizaUsuarioCorreoDto,
   ) {
     try {
-      return await this.usuariosService.editarCorreo(
-        actualizaUsuarioCorreoDto,
-      );
+      return await this.usuariosService.editarCorreo(actualizaUsuarioCorreoDto);
     } catch (error) {
       throw error;
     }

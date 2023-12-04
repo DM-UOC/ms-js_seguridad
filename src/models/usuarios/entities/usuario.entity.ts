@@ -22,6 +22,8 @@ export class UsuarioEntity {
   roles?: string[];
   @prop({ default: [] })
   telefonos?: string[];
+  @prop({})
+  fecha_desde!: Date;
   @prop({ type: CorreoEntity, default: [] })
   correos?: CorreoEntity[];
   @prop({
