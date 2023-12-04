@@ -14,11 +14,12 @@ import { ExceptionFilter } from '@filters/exception-filter/exception-filter';
 import { CreateUsuarioDto } from '@models/usuarios/dto/create-usuario.dto';
 import { UpdateUsuarioDto } from '@models/usuarios/dto/update-usuario.dto';
 import { ActualizaUsuarioImagenDto } from '@models/usuarios/dto/actualiza-usuarioimagen.dto';
+import { RegistraUsuarioCorreoDto } from '@models/usuarios/dto/registra-usuariocorreo.dto';
+import { ActualizaUsuarioCorreoDto } from '@models/usuarios/dto/actualiza-usuario.correo.dto';
 
 import { UsuariosService } from '@services/usuarios/usuarios.service';
 
 import config from '@app/libs/config/config';
-import { RegistraUsuarioCorreoDto } from '@app/src/models/usuarios/dto/registra-usuariocorreo.dto';
 
 @UseFilters(new ExceptionFilter())
 @Controller('usuarios')
@@ -96,6 +97,36 @@ export class UsuariosController {
     try {
       return await this.usuariosService.registraCorreo(
         registraUsuarioCorreoDto,
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({
+    cmd: config().microservicios.seguridad.procesos.usuario.correo.editar,
+  })
+  async edidtarCorreo(
+    @Body() actualizaUsuarioCorreoDto: ActualizaUsuarioCorreoDto
+  ) {
+    try {
+      return await this.usuariosService.editarCorreo(
+        actualizaUsuarioCorreoDto,
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({
+    cmd: config().microservicios.seguridad.procesos.usuario.correo.eliminar,
+  })
+  async eliminarCorreo(
+    @Body() actualizaUsuarioCorreoDto: ActualizaUsuarioCorreoDto,
+  ) {
+    try {
+      return await this.usuariosService.eliminarCorreo(
+        actualizaUsuarioCorreoDto,
       );
     } catch (error) {
       throw error;

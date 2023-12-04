@@ -9,6 +9,7 @@ import { UpdateUsuarioDto } from '@models/usuarios/dto/update-usuario.dto';
 import { UsuarioEntity } from '@models/usuarios/entities/usuario.entity';
 import { ActualizaUsuarioImagenDto } from '@models/usuarios/dto/actualiza-usuarioimagen.dto';
 import { RegistraUsuarioCorreoDto } from '@models/usuarios/dto/registra-usuariocorreo.dto';
+import { ActualizaUsuarioCorreoDto } from '@models/usuarios/dto/actualiza-usuario.correo.dto';
 
 @Injectable()
 export class UsuariosService {
@@ -373,7 +374,63 @@ export class UsuariosService {
     }
   }
 
-  cambiaEstadoCorreo() {
+  private async actualizaCorreoEstadoPrincipal(
+    actualizaUsuarioCorreoDto: ActualizaUsuarioCorreoDto,
+    estado: boolean = true
+  ) {
+    try {
+      // * desestructura el objeto...
+      const { usuario_id, usuario } = actualizaUsuarioCorreoDto;
+      return await this.usuarioEntity.findByIdAndUpdate({
+        _id: new Types.ObjectId(usuario_id),
+      }, {
+        $set: {
+          'correos.$[].principal': estado,
+          'correos.$[].auditoria': {
+            fecha_actualiza: new Date(),
+            usuario_actualiza: usuario,            
+          },          
+        }
+      }, {
+        new: true
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async editarCorreo(actualizaUsuarioCorreoDto: ActualizaUsuarioCorreoDto) {
+    try {
+      // * desestructura el objeto...
+      const { _id, correo, principal, usuario } = actualizaUsuarioCorreoDto;
+      // * si el correo pasa a ser principal = true, el resto del correo pasa a false...
+      if(principal) await this.actualizaCorreoEstadoPrincipal(actualizaUsuarioCorreoDto, false);
+      // * actualiza el correo...
+      return await this.usuarioEntity.findOneAndUpdate({
+        'correos._id': new Types.ObjectId(_id)
+      },  {
+        $set: {
+          'correos.$[correoId].correo': correo,
+          'correos.$[correoId].principal': principal,
+          'correos.$[correoId].auditoria': {
+            fecha_actualiza: new Date(),
+            usuario_actualiza: usuario,            
+          },
+        }
+      },  {
+        new: true,
+        arrayFilters: [
+          {
+            'correoId._id': new Types.ObjectId(_id) 
+          }
+        ]
+      })
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  eliminarCorreo(actualizaUsuarioCorreoDto: ActualizaUsuarioCorreoDto) {
     try {
       
     } catch (error) {
